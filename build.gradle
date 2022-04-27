@@ -1,0 +1,75 @@
+// https://techblog.woowahan.com/2597/
+// 블로그 필수 참고
+
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id "org.asciidoctor.jvm.convert" version "3.3.2" //(1) AsciiDoc 파일을 컨버팅하고 Build 폴더에 복사하기 위한 플러그인
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+configurations { // asciidoc 세팅
+	asciidoctorExt
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation 'com.google.code.gson:gson:2.9.0'
+
+	// rest docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc' // (5) mockmvc 를 restdocs 에 사용할수 있게 하는 라이브러리입니다.
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// rest docs 문서
+// https://docs.spring.io/spring-restdocs/docs/current/reference/html5/
+
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+test {
+	useJUnitPlatform()
+	outputs.dir snippetsDir
+}
+
+asciidoctor {
+	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn copyDocument
+}

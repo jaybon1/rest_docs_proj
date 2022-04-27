@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <title>Title</title>
+    <style>
+        @import "/todolist.css";
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="todolist not-done">
+                <h1>TODO LIST</h1>
+                <input type="text" class="form-control add-todo" placeholder="할일을 입력하고 엔터를 치세요"
+                     autofocus onkeypress="return insertTodoList(this, event)">
+                <hr>
+                <ul th:each="todo : ${todoList}" id="sortable" class="list-unstyled">
+
+                    <li th:if="${todo.doneYn.equals('N')}" class="ui-state-default">
+                        <div class="checkbox">
+                            <label>
+                                <input th:onchange="|javascript:setDone(${todo.idx})|" type="checkbox" value=""/><span
+                                    th:text="${todo.content}"></span>
+                            </label>
+                        </div>
+                    </li>
+
+                </ul>
+                <div class="todo-footer">
+                    <strong><span th:text="${todoList.size()}" class="count-todos"></span></strong> 항목 남았음
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="todolist">
+                <h1>Already DONE</h1>
+                <ul th:each="todo : ${todoList}" id="done-items" class="list-unstyled">
+                    <li th:if="${todo.doneYn.equals('Y')}">
+                        <div class="checkbox">
+                            <label>
+                                <input th:onchange="|javascript:setDone(${todo.idx})|" class="remove-item"
+                                       type="checkbox" value=""/><span th:text="${todo.content}"></span></label>
+                            <button th:onclick="|javascript:setDelete(${todo.idx})|" class="remove-item btn btn-default btn-xs pull-right"><span
+                                    class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    console.log("스타일 참고", "https://bootsnipp.com/snippets/QbN51");
+
+    // const DBLIBRARY = getDBLibrary();
+    //
+    // function getDBLibrary() {
+    //     let dbLibrary;
+    //     if (location.port.includes("jpastreamer")){
+    //         dbLibrary = "jpastreamer";
+    //     } else if (location.pathname.includes("querydsl")){
+    //         dbLibrary = "querydsl";
+    //     } else if (location.pathname.includes("jpa")){
+    //         dbLibrary = "jpa";
+    //     } else {
+    //         dbLibrary = "mybatis";
+    //     }
+    //
+    //     return dbLibrary;
+    // }
+
+    // const form = document.createElement('form');
+    // form.method = 'post'
+    // form.action = 'http://localhost:8080/mybatis/todoList'
+    // const hiddenField = document.createElement('input');
+    // hiddenField.type = 'hidden';
+    // hiddenField.name = 'idx';
+    // hiddenField.value = idx;
+    // form.appendChild(hiddenField);
+    // document.body.appendChild(form);
+    // form.submit();
+    // document.body.removeChild(form);
+
+    const insertTodoList = (element, e) => {
+        // const uri = .
+
+        e.preventDefault;
+        if (e.which == 13) {
+
+            if (element.value != '') {
+
+                $.ajax({
+                    type: 'post',
+                    url: `/todoList`,
+                    data: JSON.stringify([element.value]),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'text',
+                }).done((result) => {
+                    if (result == "ok") {
+                        // location.href = location.href.slice(location.href.indexOf("/",10),location.href.indexOf("todoList")) +'todoList';
+                        location.href = '/todoList';
+                    }
+                }).fail((error) => {
+                    alert(error);
+                });
+            } else {
+                // some validation
+            }
+        }
+    }
+
+    const setDone = (idx) => {
+        console.log(idx);
+        $.ajax({
+            type: 'put',
+            url: `/todoList`,
+            data: JSON.stringify([idx]),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'text',
+        }).done((result) => {
+            if (result == "ok") {
+                location.href = location.href.slice(location.href.indexOf("/",10),location.href.indexOf("todoList")) +'todoList';
+            }
+        }).fail((error) => {
+            alert(error);
+        });
+
+    }
+
+    const setDelete = (idx) => {
+        console.log(idx);
+        $.ajax({
+            type: 'delete',
+            url: `/todoList`,
+            data: JSON.stringify([idx]),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'text',
+        }).done((result) => {
+            if (result == "ok") {
+                location.href = location.href.slice(location.href.indexOf("/",10),location.href.indexOf("todoList")) +'todoList';
+            }
+        }).fail((error) => {
+            alert(error);
+        });
+    }
+
+    // $("#sortable").sortable();
+    // $("#sortable").disableSelection();
+
+
+    // countTodos();
+
+    // // count tasks
+    // function countTodos(){
+    //     var count = $("#sortable li").length;
+    //     $('.count-todos').html(count);
+    // }
+
+    // // all done btn
+    // $("#checkAll").click(function(){
+    //     // AllDone();
+    //
+    // });
+
+    // //create todo
+    // $('.add-todo').on('keypress',function (e) {
+    //     e.preventDefault
+    //     if (e.which == 13) {
+    //         if($(this).val() != ''){
+    //             var todo = $(this).val();
+    //             createTodo(todo);
+    //             countTodos();
+    //         }else{
+    //             // some validation
+    //         }
+    //     }
+    // });
+
+    // // mark task as done
+    // $('.todolist').on('change','#sortable li input[type="checkbox"]',function(){
+    //     if($(this).prop('checked')){
+    //         var doneItem = $(this).parent().parent().find('label').text();
+    //         $(this).parent().parent().parent().addClass('remove');
+    //         done(doneItem);
+    //         countTodos();
+    //     }
+    // });
+
+    // //delete done task from "already done"
+    // $('.todolist').on('click','.remove-item',function(){
+    //     // removeItem(this);
+    //
+    // });
+
+
+    // //create task
+    // function createTodo(text){
+    //     var markup = '<li class="ui-state-default"><div class="checkbox"><label><input type="checkbox" value="" />'+ text +'</label></div></li>';
+    //     $('#sortable').append(markup);
+    //     $('.add-todo').val('');
+    // }
+
+    // //mark task as done
+    // function done(doneItem){
+    //     var done = doneItem;
+    //     var markup = '<li>'+ done +'<button class="btn btn-default btn-xs pull-right  remove-item"><span class="glyphicon glyphicon-remove"></span></button></li>';
+    //     $('#done-items').append(markup);
+    //     $('.remove').remove();
+    // }
+
+    // //mark all tasks as done
+    // function AllDone(){
+    //     var myArray = [];
+    //
+    //     $('#sortable li').each( function() {
+    //         myArray.push($(this).text());
+    //     });
+    //
+    //     // add to done
+    //     for (i = 0; i < myArray.length; i++) {
+    //         $('#done-items').append('<li>' + myArray[i] + '<button class="btn btn-default btn-xs pull-right  remove-item"><span class="glyphicon glyphicon-remove"></span></button></li>');
+    //     }
+    //
+    //     // myArray
+    //     $('#sortable li').remove();
+    //     countTodos();
+    // }
+
+    // //remove done task from list
+    // function removeItem(element){
+    //     $(element).parent().remove();
+    // }
+
+</script>
+</body>
+</html>

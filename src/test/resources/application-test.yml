@@ -1,0 +1,40 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    #    url: jdbc:h2:~/test
+    url : jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      schemaLocations: classpath:h2/schema.sql
+      dataLocations: classpath:h2/data.sql
+      mode: always
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+      ddl-auto: create
+    #    generate-ddl: false
+    show_sql: true
+    properties:
+      hibernate.format_sql: true
+    defer-datasource-initialization: true
+
+server:
+  servlet:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+  port: 8070

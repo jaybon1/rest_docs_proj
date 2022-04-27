@@ -1,0 +1,61 @@
+= Jansimbari API Guide
+Jaybon;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+//:operation-curl-request-title: test title
+//:operation-http-response-title: Example response
+
+:baseDir: C:\programming\side_project\rest_docs_test\rest_docs_proj\src\docs
+
+
+//include::{baseDir}/common.adoc[]
+
+[[resources_partners]]
+== API
+
+=== 할 일 목록
+
+==== 할 일 리스트
+
+[%collapsible]
+.리스트
+=====
+
+operation::리스트[snippets='http-request,http-response']
+
+=====
+
+==== 할 일 저장
+
+[%collapsible]
+.저장
+=====
+
+operation::저장[snippets='http-request,http-response']
+
+=====
+
+==== 할 일 수정
+
+[%collapsible]
+.수정
+=====
+
+operation::수정[snippets='http-request,path-parameters,http-response']
+
+=====
+
+==== 할 일 삭제
+
+[%collapsible]
+.삭제
+=====
+
+operation::삭제[snippets='http-request,request-parameters,http-response']
+
+=====
+
