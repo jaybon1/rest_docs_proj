@@ -1,6 +1,8 @@
 # 환경 및 기능
 h2데이터베이스
+
 validation (enum 커스텀 포함)
+
 restdocs
 
 
